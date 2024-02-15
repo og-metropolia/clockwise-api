@@ -8,12 +8,12 @@
   "parserOptions": {
     "project": ["./tsconfig.json"]
   },
-  "extends": ["eslint:recommended", "plugin:react/recommended", "prettier"],
+  "extends": ["eslint:recommended", "prettier"],
   "plugins": ["import", "@typescript-eslint", "prettier"],
   "rules": {},
   "settings": {
     "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"]
+      "@typescript-eslint/parser": [".ts"]
     },
     "import/resolver": {
       "typescript": {}
