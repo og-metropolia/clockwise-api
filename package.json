@@ -1,6 +1,6 @@
 {
-  "name": "graphql-template",
-  "version": "0.0.1",
+  "name": "timewise-api",
+  "version": "0.0.0",
   "description": "",
   "main": "src/index.ts",
   "private": true,
