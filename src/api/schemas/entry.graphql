@@ -1,0 +1,8 @@
+type Entry {
+  _id: ID!
+  user_id: ID!
+  start_timestamp: String!
+  end_timestamp: String!
+  type: String!
+  description: String!
+}

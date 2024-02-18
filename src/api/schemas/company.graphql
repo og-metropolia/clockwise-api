@@ -1,0 +1,6 @@
+type Company {
+  _id: ID!
+  name: String!
+  allowed_emails: [String]!
+  business_identity_code: String!
+}

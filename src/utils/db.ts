@@ -1,4 +1,3 @@
-//module is in strict mode by default ;)
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 dotenv.config();
