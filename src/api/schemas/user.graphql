@@ -1,0 +1,53 @@
+enum Role {
+  admin
+  employer
+  user
+}
+
+type User {
+  id: ID!
+  email: String!
+  password: String!
+  role: Role!
+  first_name: String!
+  last_name: String!
+  job_title: String
+  phone: String
+  language: String!
+  profile_picture: String
+  manager: String
+}
+
+type UserResponse {
+  id: ID!
+  message: String!
+}
+
+type Query {
+  users: [User!]
+}
+
+input UserInput {
+  email: String!
+  password: String!
+  role: Role!
+  first_name: String!
+  last_name: String!
+  language: String!
+}
+
+type TokenUser {
+  id: ID!
+  email: String!
+  role: Role!
+}
+
+type TokenResponse {
+  token: String!
+  user: TokenUser!
+}
+
+type Mutation {
+  createUser(input: UserInput!): UserResponse!
+  login(email: String!, password: String!): TokenResponse!
+}
