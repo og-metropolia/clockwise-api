@@ -47,7 +47,26 @@ type TokenResponse {
   user: TokenUser!
 }
 
+input UpdateUser {
+  email: String
+  password: String
+  role: Role
+  first_name: String
+  last_name: String
+  job_title: String
+  phone: String
+  language: String
+  profile_picture: String
+  manager: String
+}
+
+type UserUpdateResponse {
+  message: String!
+  data: User
+}
+
 type Mutation {
   createUser(input: UserInput!): UserResponse!
+  updateUser(id: ID!, input: UpdateUser!): UserUpdateResponse!
   login(email: String!, password: String!): TokenResponse!
 }

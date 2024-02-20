@@ -33,6 +33,16 @@ export default {
       });
       return await user.save();
     },
+    updateUser: async (
+      _: any,
+      args: {
+        id: string;
+        input: UserInput;
+      },
+    ) => {
+      const { id, input } = args;
+      return await userModel.findByIdAndUpdate(id, input, { new: true });
+    },
     login: async (
       _: any,
       args: {
