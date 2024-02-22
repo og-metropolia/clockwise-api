@@ -40,6 +40,12 @@ export default {
         input: UserInput;
       },
     ) => {
+      if (args.input.password) {
+        args.input.password = await bcrypt.hash(
+          args.input.password,
+          saltRounds,
+        );
+      }
       const { id, input } = args;
       return await userModel.findByIdAndUpdate(id, input, { new: true });
     },
