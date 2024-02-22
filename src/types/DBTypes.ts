@@ -1,4 +1,4 @@
-export type Role = 'USER' | 'EMPLOYER' | 'ADMIN';
+export type Role = 'EMPLOYEE' | 'MANAGER' | 'ADMIN';
 
 export type User = {
   id: string;
@@ -14,12 +14,17 @@ export type User = {
   manager?: string;
   createdAt: Date;
   updatedAt: Date;
+  company: Company;
 };
+
+export type LoginUser = Omit<User, 'password'>;
 
 export type UserInput = Pick<
   User,
-  'email' | 'password' | 'role' | 'first_name' | 'last_name' | 'language'
->;
+  'email' | 'password' | 'first_name' | 'last_name' | 'language' | 'manager'
+> & {
+  company: string;
+};
 
 export type EntryType =
   | 'working'

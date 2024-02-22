@@ -4,7 +4,11 @@ const userSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ['user', 'employer', 'admin'], required: true },
+    role: {
+      type: String,
+      enum: ['EMPLOYEE', 'MANAGER', 'ADMIN'],
+      required: true,
+    },
     first_name: { type: String, required: true },
     last_name: { type: String, required: true },
     job_title: { type: String, required: false },
@@ -14,7 +18,10 @@ const userSchema = new mongoose.Schema(
     manager: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: false,
+    },
+    company: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Company',
     },
   },
   { timestamps: true },

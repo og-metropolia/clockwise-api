@@ -1,3 +1,4 @@
 import userResolver from './userResolver';
+import companyResolver from './companyResolver';
 
-export default [userResolver];
+export default [userResolver, companyResolver];
