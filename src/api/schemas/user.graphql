@@ -1,7 +1,7 @@
 enum Role {
-  admin
-  employer
-  user
+  ADMIN
+  MANAGER
+  EMPLOYEE
 }
 
 type User {
@@ -11,11 +11,12 @@ type User {
   role: Role!
   first_name: String!
   last_name: String!
+  language: String!
   job_title: String
   phone: String
-  language: String!
   profile_picture: String
-  manager: String
+  manager: User
+  company: Company
 }
 
 type Query {
@@ -25,10 +26,11 @@ type Query {
 input UserInput {
   email: String!
   password: String!
-  role: Role!
   first_name: String!
   last_name: String!
   language: String!
+  manager: String
+  company: String
 }
 
 type TokenUser {
@@ -57,10 +59,20 @@ input UpdateUser {
 
 type UserResponse {
   id: ID!
+  email: String!
+  role: Role!
+  first_name: String!
+  last_name: String!
+  job_title: String
+  phone: String
+  language: String!
+  profile_picture: String
+  manager: String
 }
 
 type Mutation {
   createUser(input: UserInput!): UserResponse!
-  updateUser(id: ID!, input: UpdateUser!): User!
+  updateUser(id: ID!, input: UpdateUser!): UserResponse!
+  deleteUser(id: ID!): UserResponse!
   login(email: String!, password: String!): TokenResponse!
 }
