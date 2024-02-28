@@ -19,7 +19,14 @@ export default {
       args: {
         input: Omit<Company, 'id'>;
       },
+      context: UserContext,
     ) => {
+      if (context?.user?.role !== 'ADMIN') {
+        throw new GraphQLError('Unauthorized', {
+          extensions: { code: 'UNAUTHORIZED', http: { status: 401 } },
+        });
+      }
+
       const { name, allowed_emails, business_identity_code } = args.input;
       return companyModel.create({
         name,
@@ -33,7 +40,14 @@ export default {
         id: string;
         input: Partial<Omit<Company, 'id'>>;
       },
+      context: UserContext,
     ) => {
+      if (context?.user?.role !== 'MANAGER') {
+        throw new GraphQLError('Unauthorized', {
+          extensions: { code: 'UNAUTHORIZED', http: { status: 401 } },
+        });
+      }
+
       const { id, input } = args;
       return companyModel.findByIdAndUpdate(id, input, { new: true });
     },
