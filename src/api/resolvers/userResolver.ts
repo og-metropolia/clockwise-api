@@ -13,6 +13,9 @@ export default {
     users: async () => {
       return userModel.find();
     },
+    user: async (_: any, args: { id: string }) => {
+      return userModel.findById(args.id);
+    },
   },
   Mutation: {
     createUser: async (
