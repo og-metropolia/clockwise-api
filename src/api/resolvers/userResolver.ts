@@ -1,4 +1,4 @@
-import { User, UserInput } from '@/types/DBTypes';
+import { FullUser, UserInput } from '@/types/DBTypes';
 import userModel from '../models/userModel';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -11,10 +11,10 @@ require('dotenv').config();
 export default {
   Query: {
     users: async () => {
-      return userModel.find();
+      return userModel.find().select('-password');
     },
     user: async (_: any, args: { id: string }) => {
-      return userModel.findById(args.id);
+      return userModel.findById(args.id).select('-password');
     },
   },
   Mutation: {
@@ -103,7 +103,7 @@ export default {
     },
   },
   User: {
-    manager: async (parent: User) => {
+    manager: async (parent: FullUser) => {
       return userModel.findById(parent.manager);
     },
   },

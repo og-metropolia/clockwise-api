@@ -1,6 +1,6 @@
 export type Role = 'EMPLOYEE' | 'MANAGER' | 'ADMIN';
 
-export type User = {
+export type FullUser = {
   id: string;
   email: string;
   password: string;
@@ -17,10 +17,10 @@ export type User = {
   company: Company;
 };
 
-export type LoginUser = Omit<User, 'password'>;
+export type LoginUser = Omit<FullUser, 'password'>;
 
 export type UserInput = Pick<
-  User,
+  FullUser,
   'email' | 'password' | 'first_name' | 'last_name' | 'language' | 'manager'
 > & {
   company: string;

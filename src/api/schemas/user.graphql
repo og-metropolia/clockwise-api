@@ -7,7 +7,6 @@ enum Role {
 type User {
   id: ID!
   email: String!
-  password: String!
   role: Role!
   first_name: String!
   last_name: String!
