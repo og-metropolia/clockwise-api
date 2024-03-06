@@ -1,4 +1,4 @@
-import { FullUser, UserInput } from '@/types/DBTypes';
+import { LoginUser, UserInput } from '@/types/DBTypes';
 import userModel from '../models/userModel';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -103,7 +103,7 @@ export default {
     },
   },
   User: {
-    manager: async (parent: FullUser) => {
+    manager: async (parent: LoginUser) => {
       return userModel.findById(parent.manager);
     },
   },
