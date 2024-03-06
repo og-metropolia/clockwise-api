@@ -1,4 +1,4 @@
-import { User, UserInput } from '@/types/DBTypes';
+import { LoginUser, UserInput } from '@/types/DBTypes';
 import userModel from '../models/userModel';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -11,10 +11,10 @@ require('dotenv').config();
 export default {
   Query: {
     users: async () => {
-      return userModel.find();
+      return userModel.find().select('-password');
     },
     user: async (_: any, args: { id: string }) => {
-      return userModel.findById(args.id);
+      return userModel.findById(args.id).select('-password');
     },
   },
   Mutation: {
@@ -48,9 +48,10 @@ export default {
     updateUser: async (
       _: any,
       args: {
-        id: string;
+        id: string | null;
         input: Partial<UserInput>;
       },
+      context: UserContext,
     ) => {
       if (args.input.password) {
         args.input.password = await bcrypt.hash(
@@ -59,9 +60,31 @@ export default {
         );
       }
       const { id, input } = args;
-      return await userModel
-        .findByIdAndUpdate(id, input, { new: true })
-        .select('-password');
+
+      if (!context.user) throw new Error('Not authenticated');
+
+      if (context.user?.role === 'ADMIN') {
+        return await userModel
+          .findByIdAndUpdate(id, input, { new: true })
+          .select('-password');
+      }
+
+      if (context.user?.role === 'MANAGER') {
+        return await userModel
+          .findOneAndUpdate({ _id: id, manager: context.user.id }, input, {
+            new: true,
+          })
+          .select('-password');
+      }
+
+      if (!args.id)
+        return await userModel
+          .findOneAndUpdate({ _id: context.user.id }, input, {
+            new: true,
+          })
+          .select('-password');
+
+      throw new Error('Insufficient permissions');
     },
     deleteUser: async (_: any, args: { id: string }, context: UserContext) => {
       if (context.user?.role === 'ADMIN') {
@@ -103,7 +126,7 @@ export default {
     },
   },
   User: {
-    manager: async (parent: User) => {
+    manager: async (parent: LoginUser) => {
       return userModel.findById(parent.manager);
     },
   },
