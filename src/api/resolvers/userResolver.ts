@@ -9,6 +9,19 @@ const saltRounds = 10;
 
 require('dotenv').config();
 
+async function isAllowedEmail(
+  email: string | undefined,
+  companyId: string | undefined,
+) {
+  if (!companyId) return false;
+  const allowedSlugs = (
+    await companyModel.find({ _id: companyId }).select('allowed_emails')
+  )[0]?.allowed_emails;
+  if (!email || !allowedSlugs) return false;
+  const emailDomain = email.split('@')[1];
+  return allowedSlugs.includes('@' + emailDomain);
+}
+
 export default {
   Query: {
     users: async () => {
@@ -33,10 +46,7 @@ export default {
       const { email, password, first_name, last_name, language, company } =
         args.input;
 
-      const validEmails = (
-        await companyModel.find({ _id: company }).select('allowed_emails')
-      )[0]?.allowed_emails;
-      if (email && !validEmails?.includes(email))
+      if (!(await isAllowedEmail(args.input?.email, args.input?.company)))
         throw new Error('Email not allowed');
 
       const hashedPassword = await bcrypt.hash(password, saltRounds);
@@ -68,10 +78,7 @@ export default {
         );
       }
 
-      const validEmails = (
-        await companyModel.find({ _id: input.company }).select('allowed_emails')
-      )[0]?.allowed_emails;
-      if (input?.email && !validEmails?.includes(input?.email))
+      if (!isAllowedEmail(args.input?.email, args.input?.company))
         throw new Error('Email not allowed');
 
       if (!context.user) throw new Error('Not authenticated');
