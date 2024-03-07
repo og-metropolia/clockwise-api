@@ -68,6 +68,7 @@ type UserResponse {
   language: String!
   profile_picture: String
   manager: String
+  company: String
 }
 
 type Mutation {
