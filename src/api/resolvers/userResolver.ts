@@ -36,7 +36,8 @@ export default {
       const validEmails = (
         await companyModel.find({ _id: company }).select('allowed_emails')
       )[0]?.allowed_emails;
-      if (!validEmails?.includes(email)) throw new Error('Invalid email');
+      if (email && !validEmails?.includes(email))
+        throw new Error('Email not allowed');
 
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -67,6 +68,12 @@ export default {
         );
       }
       const { id, input } = args;
+
+      const validEmails = (
+        await companyModel.find({ _id: input.company }).select('allowed_emails')
+      )[0]?.allowed_emails;
+      if (input?.email && !validEmails?.includes(input?.email))
+        throw new Error('Email not allowed');
 
       if (!context.user) throw new Error('Not authenticated');
 
