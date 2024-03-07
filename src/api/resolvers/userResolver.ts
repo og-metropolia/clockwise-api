@@ -59,30 +59,34 @@ export default {
           saltRounds,
         );
       }
-      const { id, input } = args;
 
       if (!context.user) throw new Error('Not authenticated');
 
+      if (args.id === context.user.id) {
+        return await userModel
+          .findOneAndUpdate({ _id: args.id }, args.input, {
+            new: true,
+          })
+          .select('-password');
+      }
+
       if (context.user?.role === 'ADMIN') {
         return await userModel
-          .findByIdAndUpdate(id, input, { new: true })
+          .findByIdAndUpdate(args.id, args.input, { new: true })
           .select('-password');
       }
 
       if (context.user?.role === 'MANAGER') {
         return await userModel
-          .findOneAndUpdate({ _id: id, manager: context.user.id }, input, {
-            new: true,
-          })
+          .findOneAndUpdate(
+            { _id: args.id, manager: context.user.id },
+            args.input,
+            {
+              new: true,
+            },
+          )
           .select('-password');
       }
-
-      if (!args.id)
-        return await userModel
-          .findOneAndUpdate({ _id: context.user.id }, input, {
-            new: true,
-          })
-          .select('-password');
 
       throw new Error('Insufficient permissions');
     },
