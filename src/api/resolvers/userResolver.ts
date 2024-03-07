@@ -3,6 +3,7 @@ import userModel from '../models/userModel';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UserContext } from '@/types/Context';
+import companyModel from '../models/companyModel';
 
 const saltRounds = 10;
 
@@ -31,6 +32,13 @@ export default {
 
       const { email, password, first_name, last_name, language, company } =
         args.input;
+
+      const validEmails = (
+        await companyModel.find({ _id: company }).select('allowed_emails')
+      )[0]?.allowed_emails;
+      if (email && !validEmails?.includes(email))
+        throw new Error('Email not allowed');
+
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
       const user = new userModel({
@@ -59,6 +67,12 @@ export default {
           saltRounds,
         );
       }
+
+      const validEmails = (
+        await companyModel.find({ _id: input.company }).select('allowed_emails')
+      )[0]?.allowed_emails;
+      if (input?.email && !validEmails?.includes(input?.email))
+        throw new Error('Email not allowed');
 
       if (!context.user) throw new Error('Not authenticated');
 
