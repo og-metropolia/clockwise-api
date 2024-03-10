@@ -1,4 +1,4 @@
-import { LoginUser, UserInput } from '@/types/DBTypes';
+import { LoginUser, Role, UserInput } from '@/types/DBTypes';
 import userModel from '../models/userModel';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -29,6 +29,18 @@ export default {
     },
     user: async (_: any, args: { id: string }) => {
       return userModel.findById(args.id).select('-password');
+    },
+    usersByCompany: async (
+      _: any,
+      args: { companyId: string; role: Role },
+      context: UserContext,
+    ) => {
+      if (context.user?.role === 'EMPLOYEE')
+        throw new Error('Insufficient permissions');
+      if (!args.role) return userModel.find({ company: args.companyId });
+      return userModel
+        .find({ company: args.companyId, role: args.role })
+        .select('-password');
     },
   },
   Mutation: {
