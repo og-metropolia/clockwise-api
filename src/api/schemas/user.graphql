@@ -20,7 +20,7 @@ type User {
 
 type Query {
   users: [User!]
-  usersByCompany(companyId: ID): [User!]
+  usersByCompany(companyId: ID!, role: Role): [User!]
   user(id: ID!): User!
 }
 
