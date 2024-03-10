@@ -30,6 +30,9 @@ export default {
     user: async (_: any, args: { id: string }) => {
       return userModel.findById(args.id).select('-password');
     },
+    usersByCompany: async (_: any, args: { companyId: string }) => {
+      return userModel.find({ company: args.companyId }).select('-password');
+    },
   },
   Mutation: {
     createUser: async (
