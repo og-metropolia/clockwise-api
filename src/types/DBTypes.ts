@@ -28,12 +28,12 @@ export type UserInput = Pick<
 
 export type EntryType =
   | 'working'
-  | 'official duties'
-  | 'Sick child'
-  | 'family member sick'
-  | 'holiday leave'
-  | 'special leave'
-  | 'sick leave';
+  | 'sick_child'
+  | 'holiday_leave'
+  | 'special_leave'
+  | 'sick_leave'
+  | 'unpaid_leave'
+  | 'other';
 
 export type Entry = {
   id: string;
@@ -41,7 +41,6 @@ export type Entry = {
   start_timestamp: Date;
   end_timestamp: Date;
   type: EntryType;
-  description?: string;
   createdAt: Date;
   updatedAt: Date;
 };
