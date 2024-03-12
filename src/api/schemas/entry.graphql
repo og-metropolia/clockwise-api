@@ -23,7 +23,7 @@ type Query {
   entryLatestModified(input: InputEntryTypeOnly): OutputEntryLatestModified
 
   entries: [Entry]
-  entriesByType(type: String!): [Entry]
+  entriesByType(input: InputEntryByTypeAndTimestamp): [Entry]
 }
 
 input InputEntry {
@@ -34,6 +34,12 @@ input InputEntry {
 
 input InputEntryTypeOnly {
   type: EntryTypes!
+}
+
+input InputEntryByTypeAndTimestamp {
+  type: EntryTypes!
+  min_timestamp: Date
+  max_timestamp: Date
 }
 
 type OutputEntryLatestModified {
