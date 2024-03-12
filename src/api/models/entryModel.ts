@@ -8,7 +8,7 @@ const entrySchema = new mongoose.Schema(
       required: true,
     },
     start_timestamp: { type: Date, required: true },
-    end_timestamp: { type: Date, required: true },
+    end_timestamp: { type: Date, required: false },
     type: {
       type: String,
       enum: [

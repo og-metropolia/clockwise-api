@@ -15,13 +15,52 @@ export default {
     },
     entriesByType: async (
       _: any,
-      args: { type: string },
+      args: {
+        input: { type: string; min_timestamp?: Date; max_timestamp?: Date };
+      },
       context: UserContext,
     ) => {
+      const { type, min_timestamp, max_timestamp } = args.input;
+
+      if (min_timestamp && max_timestamp) {
+        return entryModel.find({
+          user_id: context?.user?.id,
+          type: type,
+          start_timestamp: { $gte: min_timestamp },
+          end_timestamp: { $lte: max_timestamp },
+        });
+      }
+
+      if (min_timestamp && !max_timestamp) {
+        return entryModel.find({
+          user_id: context?.user?.id,
+          type: type,
+          start_timestamp: { $gte: min_timestamp },
+        });
+      }
+      if (!min_timestamp && max_timestamp) {
+        return entryModel.find({
+          user_id: context?.user?.id,
+          type: type,
+          end_timestamp: { $lte: max_timestamp },
+        });
+      }
+
       return entryModel.find({
         user_id: context?.user?.id,
-        type: args.type,
+        type: type,
       });
+    },
+    entryLatestModified: async (
+      _: any,
+      _args: { input: { type: Pick<Entry, 'type'> } },
+      context: UserContext,
+    ) => {
+      const result = await entryModel
+        .find({ user_id: context?.user?.id, type: _args.input?.type })
+        .sort({ updatedAt: -1 })
+        .limit(1);
+      return result.length > 0 ? result[0] : null;
     },
   },
   Mutation: {

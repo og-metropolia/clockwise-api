@@ -19,15 +19,35 @@ enum EntryTypes {
 }
 
 type Query {
-  entries: [Entry]
   entry(id: ID!): Entry!
-  entriesByType(type: String!): [Entry]
+  entryLatestModified(input: InputEntryTypeOnly): OutputEntryLatestModified
+
+  entries: [Entry]
+  entriesByType(input: InputEntryByTypeAndTimestamp): [Entry]
 }
 
 input InputEntry {
   type: EntryTypes!
   start_timestamp: Date!
-  end_timestamp: Date!
+  end_timestamp: Date
+}
+
+input InputEntryTypeOnly {
+  type: EntryTypes!
+}
+
+input InputEntryByTypeAndTimestamp {
+  type: EntryTypes!
+  min_timestamp: Date
+  max_timestamp: Date
+}
+
+type OutputEntryLatestModified {
+  id: ID!
+  user_id: ID!
+  type: EntryTypes!
+  start_timestamp: Date!
+  end_timestamp: Date
 }
 
 input UpdateEntry {
