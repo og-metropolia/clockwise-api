@@ -23,6 +23,17 @@ export default {
         type: args.type,
       });
     },
+    entryLatestModified: async (
+      _: any,
+      _args: { input: { type: Pick<Entry, 'type'> } },
+      context: UserContext,
+    ) => {
+      const result = await entryModel
+        .find({ user_id: context?.user?.id, type: _args.input?.type })
+        .sort({ updatedAt: -1 })
+        .limit(1);
+      return result.length > 0 ? result[0] : null;
+    },
   },
   Mutation: {
     createEntry: async (
