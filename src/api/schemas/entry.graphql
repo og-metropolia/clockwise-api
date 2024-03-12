@@ -1,8 +1,44 @@
+scalar Date
+
 type Entry {
   id: ID!
   user_id: ID!
-  start_timestamp: String!
-  end_timestamp: String!
-  type: String!
-  description: String!
+  type: EntryTypes!
+  start_timestamp: Date!
+  end_timestamp: Date!
+}
+
+enum EntryTypes {
+  working
+  sick_child
+  holiday_leave
+  special_leave
+  sick_leave
+  unpaid_leave
+  other
+}
+
+type Query {
+  entries: [Entry]
+  entry(id: ID!): Entry!
+  entriesByType(type: String!): [Entry]
+}
+
+input InputEntry {
+  type: EntryTypes!
+  start_timestamp: Date!
+  end_timestamp: Date!
+}
+
+input UpdateEntry {
+  user_id: ID
+  type: EntryTypes
+  start_timestamp: Date
+  end_timestamp: Date
+}
+
+type Mutation {
+  createEntry(input: InputEntry): Entry
+  updateEntry(id: ID!, input: UpdateEntry): Entry
+  deleteEntry(id: ID!): Entry
 }

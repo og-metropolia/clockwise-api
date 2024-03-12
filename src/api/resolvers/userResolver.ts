@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { UserContext } from '@/types/Context';
 import companyModel from '../models/companyModel';
+import entryModel from '../models/entryModel';
 
 const saltRounds = 10;
 
@@ -125,11 +126,21 @@ export default {
     },
     deleteUser: async (_: any, args: { id: string }, context: UserContext) => {
       if (context.user?.role === 'ADMIN') {
-        return await userModel.findByIdAndDelete(args.id).select('-password');
+        await entryModel.deleteMany({ user_id: args.id });
+        return userModel.findByIdAndDelete(args.id).select('-password');
       }
+
       if (context.user?.role === 'MANAGER') {
-        userModel.findOneAndDelete({ _id: args.id, manager: context.user.id });
-        return await userModel.findByIdAndDelete(args.id).select('-password');
+        for (const user of await userModel.find({ manager: args.id })) {
+          await entryModel.deleteMany({ user_id: user._id });
+        }
+        await userModel.findOneAndDelete({
+          _id: args.id,
+          manager: context.user.id,
+        });
+
+        await entryModel.deleteMany({ user_id: args.id });
+        return userModel.findByIdAndDelete(args.id).select('-password');
       }
     },
     login: async (
