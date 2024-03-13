@@ -3,7 +3,10 @@ type Company {
   name: String!
   allowed_emails: [String]!
   business_identity_code: String!
+  employees: [User]
+  managers: [User]
 }
+
 type Query {
   companies: [Company]
   company(id: ID!): Company!
