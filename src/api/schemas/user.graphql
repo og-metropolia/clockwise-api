@@ -40,7 +40,7 @@ type TokenUser {
   role: Role!
 }
 
-type TokenResponse {
+type LoginResponse {
   token: String!
   user: TokenUser!
 }
@@ -74,7 +74,7 @@ type UserResponse {
 
 type Mutation {
   createUser(input: UserInput!): UserResponse!
-  updateUser(id: ID!, input: UpdateUser!): UserResponse!
+  updateUser(id: ID, input: UpdateUser!): UserResponse!
   deleteUser(id: ID!): UserResponse!
-  login(email: String!, password: String!): TokenResponse!
+  login(email: String!, password: String!): LoginResponse!
 }

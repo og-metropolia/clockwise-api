@@ -53,7 +53,7 @@ export default {
     },
     entryLatestModified: async (
       _: any,
-      _args: { input: { type: Pick<Entry, 'type'> } },
+      _args: { input: Pick<Entry, 'type'> },
       context: UserContext,
     ) => {
       const result = await entryModel

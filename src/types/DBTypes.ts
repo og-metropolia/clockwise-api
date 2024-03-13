@@ -1,4 +1,5 @@
 export type Role = 'EMPLOYEE' | 'MANAGER' | 'ADMIN';
+export type Language = 'en' | 'fi' | 'sv';
 
 export type FullUser = {
   id: string;
@@ -9,7 +10,7 @@ export type FullUser = {
   last_name: string;
   job_title?: string;
   phone?: string;
-  language: string;
+  language: Language;
   profile_picture?: string;
   manager?: string;
   createdAt: Date;
@@ -19,11 +20,14 @@ export type FullUser = {
 
 export type LoginUser = Omit<FullUser, 'password'>;
 
+export type TokenUser = Pick<FullUser, 'id' | 'email' | 'role'>;
+
 export type UserInput = Pick<
   FullUser,
-  'email' | 'password' | 'first_name' | 'last_name' | 'language' | 'manager'
+  'email' | 'password' | 'first_name' | 'last_name' | 'language'
 > & {
   company: string;
+  manager: string;
 };
 
 export type EntryType =
