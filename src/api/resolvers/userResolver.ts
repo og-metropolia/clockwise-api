@@ -1,4 +1,4 @@
-import { LoginUser, Role, UserInput } from '@/types/DBTypes';
+import { Company, LoginUser, Role, UserInput } from '@/types/DBTypes';
 import userModel from '../models/userModel';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -33,14 +33,15 @@ export default {
     },
     usersByCompany: async (
       _: any,
-      args: { companyId: string; role: Role },
+      args: { companyId: string; roles: Role[] },
       context: UserContext,
     ) => {
       if (context.user?.role === 'EMPLOYEE')
         throw new Error('Insufficient permissions');
-      if (!args.role) return userModel.find({ company: args.companyId });
+      if (!args.roles || args.roles.length === 0)
+        return userModel.find({ company: args.companyId });
       return userModel
-        .find({ company: args.companyId, role: args.role })
+        .find({ company: args.companyId, role: { $in: args.roles } })
         .select('-password');
     },
   },
@@ -176,6 +177,18 @@ export default {
   User: {
     manager: async (parent: LoginUser) => {
       return userModel.findById(parent.manager);
+    },
+  },
+  Company: {
+    employees: async (parent: Company) => {
+      return userModel
+        .find({ company: parent.id, role: 'EMPLOYEE' })
+        .select('-password');
+    },
+    managers: async (parent: Company) => {
+      return userModel
+        .find({ company: parent.id, role: 'MANAGER' })
+        .select('-password');
     },
   },
 };
