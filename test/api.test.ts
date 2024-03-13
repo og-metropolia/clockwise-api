@@ -19,13 +19,9 @@ dotenv.config();
 
 describe('Graphql API', () => {
   beforeAll(async () => {
-    if (
-      !process.env.TEST_ADMIN_ID ||
-      !process.env.TEST_ADMIN_EMAIL ||
-      !process.env.TEST_ADMIN_PASSWORD
-    ) {
+    if (!process.env.TEST_ADMIN_EMAIL || !process.env.TEST_ADMIN_PASSWORD) {
       throw new Error(
-        'Missing environment variables. Please set the following: TEST_ADMIN_ID, TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD',
+        'Missing environment variables. Please set the following: TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD',
       );
     }
 
