@@ -7,10 +7,9 @@ export default {
     entries: async (_: any, _args: any, context: UserContext) => {
       return entryModel.find({ user_id: context?.user?.id });
     },
-    entry: async (_: any, args: { id: string }, context: UserContext) => {
+    entry: async (_: any, args: { id: string }) => {
       return entryModel.findOne({
         _id: args.id,
-        user_id: context?.user?.id,
       });
     },
     entriesByType: async (

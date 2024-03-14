@@ -22,13 +22,13 @@ type Query {
   entry(id: ID!): Entry!
   entryLatestModified(input: InputEntryTypeOnly): OutputEntryLatestModified
 
-  entries: [Entry]
-  entriesByType(input: InputEntryByTypeAndTimestamp): [Entry]
+  entries: [OutputEntryResponse]
+  entriesByType(input: InputEntryByTypeAndTimestamp): [OutputEntryResponse]
 }
 
 input InputEntry {
   type: EntryTypes!
-  start_timestamp: Date!
+  start_timestamp: Date
   end_timestamp: Date
 }
 
@@ -40,6 +40,14 @@ input InputEntryByTypeAndTimestamp {
   type: EntryTypes!
   min_timestamp: Date
   max_timestamp: Date
+}
+
+type OutputEntryResponse {
+  id: ID!
+  user_id: ID!
+  type: EntryTypes
+  start_timestamp: Date
+  end_timestamp: Date
 }
 
 type OutputEntryLatestModified {

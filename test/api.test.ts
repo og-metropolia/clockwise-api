@@ -11,7 +11,7 @@ import {
   updateUser,
 } from './userFunctions';
 import { getNotFound } from './testFunctions';
-import { TestUserInput } from './testTypes';
+import { TestEntryInput, TestUserInput } from './testTypes';
 import { UserContext } from '@/types/Context';
 import randomstring from 'randomstring';
 import dotenv from 'dotenv';
@@ -22,6 +22,13 @@ import {
   getSingleCompany,
   updateCompany,
 } from './companyFunctions';
+import {
+  createEntry,
+  deleteEntry,
+  getEntry,
+  getSingleEntry,
+  updateEntry,
+} from './entryFunctions';
 dotenv.config();
 
 describe('Graphql API', () => {
@@ -32,7 +39,7 @@ describe('Graphql API', () => {
       !process.env.TEST_COMPANY_ID
     ) {
       throw new Error(
-        'Missing environment variables. Please set the following: TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD',
+        'Missing environment variables. Please set the following: TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD, TEST_COMPANY_ID',
       );
     }
 
@@ -137,14 +144,6 @@ describe('Graphql API', () => {
     await updateUser(app, employeeData.token!);
   });
 
-  it('should delete employee', async () => {
-    await deleteUser(app, employeeData.user?.id!, managerData.token!);
-  });
-
-  it('should delete manager', async () => {
-    await deleteUser(app, managerData.user?.id!, adminData.token!);
-  });
-
   const company = {
     name: 'Test Company ' + randomstring.generate(7),
     allowed_emails: ['@test.com', '@test.org'],
@@ -169,6 +168,41 @@ describe('Graphql API', () => {
 
   it('should update company', async () => {
     await updateCompany(app, companyResponse.id, adminData.token!);
+  });
+
+  // const EMPLOYEE_TOKEN = process.env.TEST_EMPLOYEE_TOKEN;
+  const entry: TestEntryInput = {
+    type: 'working',
+    start_timestamp: new Date().toISOString(),
+  };
+
+  let entryResponse: any;
+  it('should create entry', async () => {
+    entryResponse = await createEntry(app, entry, employeeData.token!);
+  });
+
+  it('should get array of entries', async () => {
+    await getEntry(app, employeeData.token!);
+  });
+
+  it('should get single entry', async () => {
+    await getSingleEntry(app, entryResponse.id);
+  });
+
+  it('should update entry', async () => {
+    await updateEntry(app, entryResponse.id, employeeData.token!);
+  });
+
+  it('should delete entry', async () => {
+    await deleteEntry(app, entryResponse.id, employeeData.token!);
+  });
+
+  it('should delete employee', async () => {
+    await deleteUser(app, employeeData.user?.id!, managerData.token!);
+  });
+
+  it('should delete manager', async () => {
+    await deleteUser(app, managerData.user?.id!, adminData.token!);
   });
 
   it('should delete company', async () => {
