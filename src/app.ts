@@ -15,8 +15,8 @@ import {
   createApollo4QueryValidationPlugin,
 } from 'graphql-constraint-directive/apollo4';
 import {
-  //ApolloServerPluginLandingPageLocalDefault,
-  //ApolloServerPluginLandingPageProductionDefault,
+  ApolloServerPluginLandingPageLocalDefault,
+  ApolloServerPluginLandingPageProductionDefault,
   ApolloServerPluginLandingPageGraphQLPlayground
 } from '@apollo/server/plugin/landingPage/default';
 
@@ -48,9 +48,9 @@ const app = express();
       plugins: [
         createApollo4QueryValidationPlugin(),
         ApolloServerPluginLandingPageGraphQLPlayground()
-        /*process.env.NODE_ENV === 'production'
+        process.env.NODE_ENV === 'production'
           ? ApolloServerPluginLandingPageProductionDefault()
-          : ApolloServerPluginLandingPageLocalDefault(),*/
+          : ApolloServerPluginLandingPageLocalDefault(),
       ],
     });
 
