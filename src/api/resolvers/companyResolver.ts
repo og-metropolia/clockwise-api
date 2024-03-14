@@ -42,8 +42,14 @@ export default {
       },
       context: UserContext,
     ) => {
+      if (context?.user?.role === 'EMPLOYEE') {
+        throw new GraphQLError('Unauthorized', {
+          extensions: { code: 'UNAUTHORIZED', http: { status: 401 } },
+        });
+      }
+
       if (
-        context?.user?.role !== 'MANAGER' ||
+        context?.user?.role === 'MANAGER' &&
         context?.user?.company?.id !== args.id
       ) {
         throw new GraphQLError('Unauthorized', {
