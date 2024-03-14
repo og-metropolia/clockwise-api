@@ -123,10 +123,14 @@ describe('Graphql API', () => {
   });
 
   it('should update user', async () => {
-    await updateUser(app, managerData.token!);
+    await updateUser(app, employeeData.token!);
   });
 
-  it('should delete user', async () => {
+  it('should delete employee', async () => {
     await deleteUser(app, employeeData.user?.id!, managerData.token!);
+  });
+
+  it('should delete manager', async () => {
+    await deleteUser(app, managerData.user?.id!, adminData.token!);
   });
 });
