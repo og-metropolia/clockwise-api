@@ -60,14 +60,9 @@ export default {
       const { email, password, first_name, last_name, language, company } =
         args.input;
 
-      if (!(await isAllowedEmail(args.input?.email, args.input?.company)))
-        throw new Error(
-          'Email not allowed' +
-            ' ' +
-            args.input?.email +
-            ' ' +
-            args.input?.company,
-        );
+      if (!(await isAllowedEmail(args.input?.email, args.input?.company))) {
+        throw new Error('Email not allowed');
+      }
 
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -165,6 +160,7 @@ export default {
         if (userManager !== context.user.id) {
           throw new Error('Insufficient permissions');
         }
+
         await entryModel.deleteMany({ user_id: args.id });
         return userModel
           .findOneAndDelete(
