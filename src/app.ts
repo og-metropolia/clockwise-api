@@ -15,8 +15,9 @@ import {
   createApollo4QueryValidationPlugin,
 } from 'graphql-constraint-directive/apollo4';
 import {
-  ApolloServerPluginLandingPageLocalDefault,
-  ApolloServerPluginLandingPageProductionDefault,
+  //ApolloServerPluginLandingPageLocalDefault,
+  //ApolloServerPluginLandingPageProductionDefault,
+  ApolloServerPluginLandingPageGraphQLPlayground
 } from '@apollo/server/plugin/landingPage/default';
 
 require('dotenv').config();
@@ -46,9 +47,10 @@ const app = express();
       schema,
       plugins: [
         createApollo4QueryValidationPlugin(),
-        process.env.NODE_ENV === 'production'
+        ApolloServerPluginLandingPageGraphQLPlayground()
+        /*process.env.NODE_ENV === 'production'
           ? ApolloServerPluginLandingPageProductionDefault()
-          : ApolloServerPluginLandingPageLocalDefault(),
+          : ApolloServerPluginLandingPageLocalDefault(),*/
       ],
     });
 
