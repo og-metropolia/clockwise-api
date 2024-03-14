@@ -17,7 +17,6 @@ import {
 import {
   ApolloServerPluginLandingPageLocalDefault,
   ApolloServerPluginLandingPageProductionDefault,
-  ApolloServerPluginLandingPageGraphQLPlayground
 } from '@apollo/server/plugin/landingPage/default';
 
 require('dotenv').config();
@@ -47,7 +46,6 @@ const app = express();
       schema,
       plugins: [
         createApollo4QueryValidationPlugin(),
-        ApolloServerPluginLandingPageGraphQLPlayground()
         process.env.NODE_ENV === 'production'
           ? ApolloServerPluginLandingPageProductionDefault()
           : ApolloServerPluginLandingPageLocalDefault(),
@@ -58,10 +56,10 @@ const app = express();
 
     app.use(
       '/graphql',
-      cors(),
+      cors<cors.CorsRequest>(),
       express.json(),
       expressMiddleware(server, {
-        context: ({ req }) => authenticate(req),
+        context: async ({ req }) => authenticate(req),
       }),
     );
 
