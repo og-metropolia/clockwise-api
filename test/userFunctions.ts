@@ -2,7 +2,7 @@ import request from 'supertest';
 import randomstring from 'randomstring';
 import { Application } from 'express';
 import { TestUser, TestUserInput } from './testTypes';
-import { FullUser, Language, Role, TokenUser } from '@/types/DBTypes';
+import { FullUser, Language, Role } from '@/types/DBTypes';
 import { UserContext } from '@/types/Context';
 
 const ROLES: Role[] = ['EMPLOYEE', 'MANAGER', 'ADMIN'];
@@ -191,7 +191,7 @@ const deleteUser = (
   url: string | Application,
   id: string,
   token: string,
-): Promise<TokenUser> => {
+): Promise<TestUser> => {
   return new Promise((resolve, reject) => {
     request(url)
       .post('/graphql')

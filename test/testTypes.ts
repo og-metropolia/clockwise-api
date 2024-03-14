@@ -1,4 +1,4 @@
-import { FullUser } from '../src/types/DBTypes';
+import { Company, FullUser } from '../src/types/DBTypes';
 
 type TestUser = Partial<FullUser>;
 type TestUserInput = Partial<
@@ -11,4 +11,9 @@ type TestUserInput = Partial<
   }
 >;
 
-export type { TestUser, TestUserInput };
+type TestCompany = Partial<Company>;
+type TestCompanyInput = Partial<
+  Pick<TestCompany, 'name' | 'allowed_emails' | 'business_identity_code'>
+>;
+
+export type { TestUser, TestUserInput, TestCompany, TestCompanyInput };

@@ -15,11 +15,22 @@ import { TestUserInput } from './testTypes';
 import { UserContext } from '@/types/Context';
 import randomstring from 'randomstring';
 import dotenv from 'dotenv';
+import {
+  createCompany,
+  deleteCompany,
+  getCompany,
+  getSingleCompany,
+  updateCompany,
+} from './companyFunctions';
 dotenv.config();
 
 describe('Graphql API', () => {
   beforeAll(async () => {
-    if (!process.env.TEST_ADMIN_EMAIL || !process.env.TEST_ADMIN_PASSWORD) {
+    if (
+      !process.env.TEST_ADMIN_EMAIL ||
+      !process.env.TEST_ADMIN_PASSWORD ||
+      !process.env.TEST_COMPANY_ID
+    ) {
       throw new Error(
         'Missing environment variables. Please set the following: TEST_ADMIN_EMAIL, TEST_ADMIN_PASSWORD',
       );
@@ -48,7 +59,7 @@ describe('Graphql API', () => {
     password: process.env.TEST_ADMIN_PASSWORD,
   };
 
-  const COMPANY_ID = '65f19f33fb7973630e4e7923'; // TODO: get by creating new company
+  const COMPANY_ID = process.env.TEST_COMPANY_ID;
 
   const testManagerUser: TestUserInput = {
     email:
@@ -132,5 +143,35 @@ describe('Graphql API', () => {
 
   it('should delete manager', async () => {
     await deleteUser(app, managerData.user?.id!, adminData.token!);
+  });
+
+  const company = {
+    name: 'Test Company ' + randomstring.generate(7),
+    allowed_emails: ['@test.com', '@test.org'],
+    business_identity_code: randomstring.generate({
+      length: 11,
+      charset: 'numeric',
+    }),
+  };
+
+  it('should get array of companies', async () => {
+    await getCompany(app);
+  });
+
+  it('should get single company', async () => {
+    await getSingleCompany(app, COMPANY_ID as string);
+  });
+
+  let companyResponse: any;
+  it('should create company', async () => {
+    companyResponse = await createCompany(app, company, adminData.token!);
+  });
+
+  it('should update company', async () => {
+    await updateCompany(app, companyResponse.id, adminData.token!);
+  });
+
+  it('should delete company', async () => {
+    await deleteCompany(app, companyResponse.id, adminData.token!);
   });
 });
