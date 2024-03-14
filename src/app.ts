@@ -1,4 +1,3 @@
-require('dotenv').config();
 import express, { Request, Response } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -10,6 +9,17 @@ import typeDefs from './api/schemas/index';
 import resolvers from './api/resolvers/index';
 import { UserContext } from './types/Context';
 import authenticate from './utils/authenticate';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import {
+  constraintDirectiveTypeDefs,
+  createApollo4QueryValidationPlugin,
+} from 'graphql-constraint-directive/apollo4';
+import {
+  ApolloServerPluginLandingPageLocalDefault,
+  ApolloServerPluginLandingPageProductionDefault,
+} from '@apollo/server/plugin/landingPage/default';
+
+require('dotenv').config();
 
 const app = express();
 
@@ -27,9 +37,19 @@ const app = express();
       res.send({ message: 'Server is running' });
     });
 
-    const server = new ApolloServer<UserContext>({
-      typeDefs,
+    const schema = makeExecutableSchema({
+      typeDefs: [constraintDirectiveTypeDefs, typeDefs],
       resolvers,
+    });
+
+    const server = new ApolloServer<UserContext>({
+      schema,
+      plugins: [
+        createApollo4QueryValidationPlugin(),
+        process.env.NODE_ENV === 'production'
+          ? ApolloServerPluginLandingPageProductionDefault()
+          : ApolloServerPluginLandingPageLocalDefault(),
+      ],
     });
 
     await server.start();

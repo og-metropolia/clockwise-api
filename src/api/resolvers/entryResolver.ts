@@ -7,10 +7,9 @@ export default {
     entries: async (_: any, _args: any, context: UserContext) => {
       return entryModel.find({ user_id: context?.user?.id });
     },
-    entry: async (_: any, args: { id: string }, context: UserContext) => {
+    entry: async (_: any, args: { id: string }) => {
       return entryModel.findOne({
         _id: args.id,
-        user_id: context?.user?.id,
       });
     },
     entriesByType: async (
@@ -53,7 +52,7 @@ export default {
     },
     entryLatestModified: async (
       _: any,
-      _args: { input: { type: Pick<Entry, 'type'> } },
+      _args: { input: Pick<Entry, 'type'> },
       context: UserContext,
     ) => {
       const result = await entryModel

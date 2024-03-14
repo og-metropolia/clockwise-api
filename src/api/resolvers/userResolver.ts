@@ -16,8 +16,8 @@ async function isAllowedEmail(
 ) {
   if (!companyId) return false;
   const allowedSlugs = (
-    await companyModel.find({ _id: companyId }).select('allowed_emails')
-  )[0]?.allowed_emails;
+    await companyModel.findOne({ _id: companyId }).select('allowed_emails')
+  )?.allowed_emails;
   if (!email || !allowedSlugs) return false;
   const emailDomain = email.split('@')[1];
   return allowedSlugs.includes('@' + emailDomain);
@@ -60,8 +60,9 @@ export default {
       const { email, password, first_name, last_name, language, company } =
         args.input;
 
-      if (!(await isAllowedEmail(args.input?.email, args.input?.company)))
+      if (!(await isAllowedEmail(args.input?.email, args.input?.company))) {
         throw new Error('Email not allowed');
+      }
 
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -92,14 +93,26 @@ export default {
         );
       }
 
-      if (!isAllowedEmail(args.input?.email, args.input?.company))
+      const companyId =
+        args.input.company ||
+        (
+          await userModel
+            .findById(args.id ?? context.user?.id)
+            .select('company')
+        )?.company?.toString();
+
+      if (
+        args.input?.email &&
+        !(await isAllowedEmail(args.input?.email, companyId))
+      ) {
         throw new Error('Email not allowed');
+      }
 
       if (!context.user) throw new Error('Not authenticated');
 
-      if (args.id === context.user.id) {
+      if (!args.id || args.id === context.user.id) {
         return await userModel
-          .findOneAndUpdate({ _id: args.id }, args.input, {
+          .findOneAndUpdate({ _id: context.user.id }, args.input, {
             new: true,
           })
           .select('-password');
@@ -126,22 +139,40 @@ export default {
       throw new Error('Insufficient permissions');
     },
     deleteUser: async (_: any, args: { id: string }, context: UserContext) => {
+      if (!context.user?.role) throw new Error('Not authenticated');
+      if (context.user.role === 'EMPLOYEE')
+        throw new Error('Insufficient permissions');
+
       if (context.user?.role === 'ADMIN') {
         await entryModel.deleteMany({ user_id: args.id });
-        return userModel.findByIdAndDelete(args.id).select('-password');
+        return userModel
+          .findByIdAndDelete(args.id, {
+            new: true,
+          })
+          .select('-password');
       }
 
       if (context.user?.role === 'MANAGER') {
-        for (const user of await userModel.find({ manager: args.id })) {
-          await entryModel.deleteMany({ user_id: user._id });
+        const userManager = (
+          await userModel.findById(args.id).select('manager')
+        )?.manager?.toString();
+
+        if (userManager !== context.user.id) {
+          throw new Error('Insufficient permissions');
         }
-        await userModel.findOneAndDelete({
-          _id: args.id,
-          manager: context.user.id,
-        });
 
         await entryModel.deleteMany({ user_id: args.id });
-        return userModel.findByIdAndDelete(args.id).select('-password');
+        return userModel
+          .findOneAndDelete(
+            {
+              _id: args.id,
+              manager: context.user.id,
+            },
+            {
+              new: true,
+            },
+          )
+          .select('-password');
       }
     },
     login: async (
