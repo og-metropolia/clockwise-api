@@ -15,15 +15,26 @@ export default {
     entriesByType: async (
       _: any,
       args: {
-        input: { type: string; min_timestamp?: Date; max_timestamp?: Date };
+        input: {
+          type: string;
+          min_timestamp?: Date;
+          max_timestamp?: Date;
+          user_id?: string;
+        };
       },
       context: UserContext,
     ) => {
+      let userId = context?.user?.id;
+
+      if (args.input.user_id && context?.user?.role !== 'EMPLOYEE') {
+        userId = args.input.user_id;
+      }
+
       const { type, min_timestamp, max_timestamp } = args.input;
 
       if (min_timestamp && max_timestamp) {
         return entryModel.find({
-          user_id: context?.user?.id,
+          user_id: userId,
           type: type,
           start_timestamp: { $gte: min_timestamp },
           end_timestamp: { $lte: max_timestamp },
@@ -32,21 +43,21 @@ export default {
 
       if (min_timestamp && !max_timestamp) {
         return entryModel.find({
-          user_id: context?.user?.id,
+          user_id: userId,
           type: type,
           start_timestamp: { $gte: min_timestamp },
         });
       }
       if (!min_timestamp && max_timestamp) {
         return entryModel.find({
-          user_id: context?.user?.id,
+          user_id: userId,
           type: type,
           end_timestamp: { $lte: max_timestamp },
         });
       }
 
       return entryModel.find({
-        user_id: context?.user?.id,
+        user_id: userId,
         type: type,
       });
     },
