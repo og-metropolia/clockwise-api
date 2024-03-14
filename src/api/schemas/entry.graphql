@@ -40,6 +40,7 @@ input InputEntryByTypeAndTimestamp {
   type: EntryTypes!
   min_timestamp: Date
   max_timestamp: Date
+  user_id: ID!
 }
 
 type OutputEntryResponse {
