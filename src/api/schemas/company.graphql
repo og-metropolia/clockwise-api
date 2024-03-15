@@ -10,6 +10,7 @@ type Company {
 type Query {
   companies: [Company]
   company(id: ID!): Company!
+  companiesByBic(business_identity_code: String!): Company
 }
 
 input InputCompany {

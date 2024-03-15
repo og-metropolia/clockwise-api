@@ -12,6 +12,16 @@ export default {
     company: async (_: any, args: { id: string }) => {
       return companyModel.findById(args.id);
     },
+    companiesByBic: async (
+      _: any,
+      args: {
+        business_identity_code: string;
+      },
+    ) => {
+      return companyModel.findOne({
+        business_identity_code: args.business_identity_code,
+      });
+    },
   },
   Mutation: {
     createCompany: async (
